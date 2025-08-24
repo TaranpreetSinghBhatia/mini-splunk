@@ -1,15 +1,33 @@
-#log_reader.py
-#First version of our mini-splunk project
+import sys
 
-def read_log(file_path):
-    """Reads and prints log file line by line"""
-    try:
-        with open(file_path, "r") as f:
-            for line in f:
-                print(line.strip())
-    except FileNotFoundError:
-        print(f"Log file {file_path} not found.")
+# Step 1: Define which log file to read
+LOG_FILE = "sample.log"
+
+def read_logs():
+    """Reads all lines from the log file."""
+    with open(LOG_FILE, "r") as f:
+        return f.readlines()
+
+def search_logs(keyword=None):
+    """Search logs for a keyword. If no keyword, show all logs."""
+    logs = read_logs()
+    if keyword:
+        # Only keep logs that contain the keyword
+        return [line for line in logs if keyword in line]
+    return logs
+
+def main():
+    # sys.argv gives command-line arguments (like python log_reader.py ERROR)
+    keyword = sys.argv[1] if len(sys.argv) > 1 else None
+
+    results = search_logs(keyword)
+
+    if results:
+        print("\n--- Search Results ---")
+        for line in results:
+            print(line.strip())  # .strip() removes newline at the end
+    else:
+        print("No logs found for your search.")
 
 if __name__ == "__main__":
-    #For now, test with a sample log file
-    read_log("sample.log")
+    main()
